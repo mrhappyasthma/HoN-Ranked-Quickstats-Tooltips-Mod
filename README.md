@@ -1,4 +1,4 @@
-# HoN Ranked Quickstats Tooltips
+# HoN Ranked Quickstats Tooltips Mod
 
 ![Example of the stats button, which can be moused over](https://i.imgur.com/wZh44BC.png)
 
