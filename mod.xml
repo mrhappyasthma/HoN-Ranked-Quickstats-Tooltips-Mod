@@ -19,10 +19,22 @@
 
     <!-- Insert the helper Lua function, which actually triggers the stat fetch. -->
     <insert position="before"><![CDATA[
-	function Player_Stats_V2:FetchSeasonNormalData(nickName)
-	    _currentNickName = nickName
-    end
+    function Player_Stats_V2:FetchSeasonNormalData(nickName)
+        _currentNickName = nickName
 
+        if nickName ~= nil then
+            println('^gPlayer_Stats_V2:FetchSeasonNormalData() called with name: '..nickName)
+        else
+            println('^gPlayer_Stats_V2:FetchSeasonNormalData() called with name: nil')
+        end
+
+        -- Probably overkill, but it triggers InitOverviewRankTypes().
+        Player_Stats_V2:ResetUI()
+
+        -- Actually trigger the fetch by submitting the forms. Again this is
+        -- overkill but it does trigger `PlayerStatsNormalSeasonResult`.
+        SubmitInitialForms()
+    end
     ]]></insert>
   </editfile>
 
