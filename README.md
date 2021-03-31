@@ -32,7 +32,7 @@ Updating is also done through the `HoN Mod Manager`. Simply click on `File -> Do
 The list of known issues is plentiful.
 
 1. This mod only works for the new interface UI. This is by design, but could potentially be ported to the legacy UI.
-2. The 'Match History' section is empty. `PlayerStatsNormalSeasonResult` provides recent match IDs, but not all the individual fields expected by the UI. It expects `7x` of the following `[path_to_hero_icon, ^844Win/^522Lose, kills_in_match, deaths_in_match, assists_in_match]`. I need to find a way to fetch this data from the match ID using Lua or a trigger.
+2. The 'Match History' section is empty. `PlayerStatsNormalSeasonResult` provides recent match IDs (`param[52]`), but not all the individual fields expected by the UI. It expects `7x` of the following `[path_to_hero_icon, ^844Win/^522Lose, kills_in_match, deaths_in_match, assists_in_match]`. I need to find a way to fetch this data from the match ID using Lua or a trigger.
 3. The positioning/sizing of the panels is hacky as can be. I couldn't find the most appropraite place to put this panel in the hierarchy, so I primarily just changed the `x`, `y`, `width`, `height` in order to make something that looks reasonable. This can easily be improved.
 4. Some icons are missing (e.g. `electrician`). The icon seems to be stored at a different path `.../icons/hero.tga` instead of `.../icon.tga`. And it's not clear why or if there are others. Most* seem to work.
 5. This always shows the stats from the current season, even if the user is in a Midwars, Public, or Casual match. This could be fixed but since I only play ranked games primarily, I cut corners by desining it to exclude game variant.
