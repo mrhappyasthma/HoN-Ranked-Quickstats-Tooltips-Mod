@@ -7,7 +7,7 @@
 This is a mod for [Heroes of Newerth](http://www.heroesofnewerth.com) to revive a similar feature that the old style UI had: a stats button with a hoverover quickstats tooltip.
 
 ## Installing
-0. You will need the [HoN Mod Manager](https://forums.heroesofnewerth.com/index.php?/topic/112-hon-mod-manager-download/) to use this mod. So first, install that.
+0. You will need the **latest** [HoN Mod Manager](https://github.com/mrhappyasthma/Heroes-Of-Newerth-Mod-Manager/releases/tag/1.4.0.1) to use this mod. So first, install that.
 
 1. Once that is installed, you can download the latest release of the Ranked Quickstats Tooltip mod from [here](https://github.com/mrhappyasthma/HoN-RankedQuickstats-Tooltips/releases/download/Latest/ranked_quickstats_tooltips.honmod).
 
@@ -35,8 +35,7 @@ The list of known issues is plentiful.
 4. Some icons are missing (e.g. `electrician`). The icon seems to be stored at a different path `.../icons/hero.tga` instead of `.../icon.tga`. And it's not clear why or if there are others. Most* seem to work.
 5. This always shows the stats from the current season, even if the user is in a Midwars, Public, or Casual match. This could be fixed but since I only play ranked games primarily, I cut corners by desining it to exclude game variant.
 6. The 'New Player' overlay is not ported. The code can mostly be forked from `game_lobby.package`, but I had some trouble getting it to work without bugs so I just skipped that for now.
-7. The mod can only be applied using the Java 'All-in-one' mod manager. The C# one causes some kind of corruption to the Lua file which HoN refuses to parse. It's not clear why - https://github.com/Xen0byte/Heroes-Of-Newerth-Mod-Manager/issues/9
-8. The GPM field in the UI is misaligned (as seen in the screenshots). This is a preexisting issue that affected the UI element in `game_lobby.package` that I forked from. But it may be nice to fix this.
+7. The GPM field in the UI is misaligned (as seen in the screenshots). This is a preexisting issue that affected the UI element in `game_lobby.package` that I forked from. But it may be nice to fix this.
 
 ## Design
 
