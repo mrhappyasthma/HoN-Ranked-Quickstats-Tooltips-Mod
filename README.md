@@ -2,7 +2,7 @@
 
 ![Example of the stats button, which can be moused over](https://i.imgur.com/wZh44BC.png)
 
-![Example of the tooltip](https://i.imgur.com/XgKjngz.png)
+![Example of the tooltip](https://i.imgur.com/REjgLyq.png)
 
 ## About
 
@@ -16,7 +16,7 @@ This is a mod for [Heroes of Newerth](http://www.heroesofnewerth.com) to revive 
 2. Place the downloaded `ranked_quickstats_tooltips.honmod` file into your Heroes of Newerth directory under `game/mod` folders. For example: `C:\Program Files (x86)\Heroes of Newerth\game\mods` or `C:\Program Files\Heroes of Newerth x64\game\mods`.
 
 3. Open up `HoN Mod Manager` and enable `Ranked Quickstats Tooltips` mod: <br/><br/>
-![Open HoN Mod Manager and click 'enable' for the 'Ranked Quickstats Tooltips' mod.](https://i.imgur.com/ju7y8h9.jpg) 
+![Open HoN Mod Manager and click 'enable' for the 'Ranked Quickstats Tooltips' mod.](https://i.imgur.com/xiYSHO3.png) 
 
 4. Click `File -> Apply Mods`: <br/><br/>
 ![Click the 'File' tab and click on the 'Apply Mods' option.](https://i.imgur.com/N7TweIL.png) <br/><br/>
