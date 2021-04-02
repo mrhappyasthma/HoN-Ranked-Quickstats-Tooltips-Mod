@@ -27,7 +27,7 @@ Updating is also done through the `HoN Mod Manager`. Simply click on `File -> Do
 
 ## Known Issues
 
-The list of known issues is plentiful.
+The list of known [issues](https://github.com/mrhappyasthma/HoN-Ranked-Quickstats-Tooltips-Mod/issues) is plentiful.
 
 1. This mod only works for the new interface UI. This is by design, but could potentially be ported to the legacy UI.
 2. The 'Match History' section is empty. `PlayerStatsNormalSeasonResult` provides recent match IDs (`param[52]`), but not all the individual fields expected by the UI. It expects `7x` of the following `[path_to_hero_icon, ^844Win/^522Lose, kills_in_match, deaths_in_match, assists_in_match]`. I need to find a way to fetch this data from the match ID using Lua or a trigger.
