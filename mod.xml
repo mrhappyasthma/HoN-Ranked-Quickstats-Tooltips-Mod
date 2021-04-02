@@ -4,7 +4,7 @@
   appversion="*"
   mmversion="*"
   name="Ranked Quickstats Tooltips"
-  version="0.1"
+  version="0.2"
   date="2021-03-21"
   description="Enables quickstat tooltips to display current season ranked data when moused-over. This is reminiscent of the old main interface game_lobby UI."
   author="MrHappyAsthma"
@@ -15,6 +15,16 @@
 
   <!-- Lua modifications -->
   <editfile name="ui/scripts/newui/player_stats_v2.lua">
+    <!-- Insert a function that exposes the `GetHeroIconPath` local function. -->
+	<find><![CDATA[local function GetHeroIconPath(hero)]]></find>
+	<find><![CDATA[return iconPath]]></find>
+	<find><![CDATA[end]]></find>
+	<insert position="after"><![CDATA[
+	    function Player_Stats_V2:GetHeroIconPath(hero)
+		    return GetHeroIconPath(hero)
+		end
+	]]></insert>
+
     <find><![CDATA[function Player_Stats_V2:Show(nickName)]]></find>
 
     <!-- Insert the helper Lua function, which actually triggers the stat fetch. -->
@@ -68,27 +78,23 @@
                     Set('QuickstatsMod_stats_tipHero{index}', '');
                 "
                 watch2="PlayerStatsNormalSeasonResult"
-                ontrigger2="
-                    If( GamePhase == 3 and QuickstatsMod_mouse_hover{index} == 1, Split
-                    (
-                        Set('QuickstatsMod_stats_tip{index}', '^444(^666' # Round((param6 / param5) * 100) # '%^444) ^w' # param6 # '\\n' # param7 # '\\n' # FtoA(param20 / param25, 2) # ':1\\n' # FtoA(param24 / param25, 2) # ':1\\n' # FtoA((param20 + param24) / param25, 2) # ':1\\n' # FtoA(param74, 1) # '\\n' # FtoA(ceil(param69 * 10) / 10, 1) # '\\n' # FtoA(ceil((param42 / (param46 / 60)) * 10) / 10, 1) # '::' # param0 # '::' # QuickstatsMod_stats_tipPlayerColor{index}),
-                        Set('QuickstatsMod_stats_tipHero{index}', '/heroes/' # param54 # '/icon.tga' # ':' # param59 # ':null|' # '/heroes/' # param55 # '/icon.tga' # ':' # param60 # ':null|' # '/heroes/' # param56 # '/icon.tga' # ':' # param61 # ':null|' # '/heroes/' # param57 # '/icon.tga' # ':' # param62 # ':null|' # '/heroes/' # param58 # '/icon.tga' # ':' # param63 # ':null'),
-                        DoEvent(1)
-                    ));
-                "
+				ontrigger2lua="
+				    if GetCvarBool('QuickstatsMod_mouse_hover{index}') then
+					    Cvar.GetCvar('QuickstatsMod_stats_tip{index}'):Set('^444(^666' .. math.floor(((param6 / param5) * 100) + 0.5) .. '%^444 ^w' .. param6 .. '\\n' .. param7 .. '\\n' .. string.format('%.2f', param20 / param25) .. ':1\\n' .. string.format('%.2f', param24 / param25) .. ':1\\n' .. string.format('%.2f', (param20 + param24) / param25) .. ':1\\n' .. string.format('%.1f', param74) .. '\\n' .. string.format('%.1f', math.ceil(param69 * 10) / 10) .. '\\n' .. string.format('%.1f', math.ceil((param42 / (param46 / 60)) * 10) / 10) .. '::' .. param0 .. '::' .. GetCvarString('QuickstatsMod_stats_tipPlayerColor{index}'))
+					    Cvar.GetCvar('QuickstatsMod_stats_tipHero{index}'):Set(Player_Stats_V2:GetHeroIconPath(param54) .. ':' .. param59 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param55) .. ':' .. param60 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param56) .. ':' .. param61 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param57) .. ':' .. param62 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param58) .. ':' .. param63 .. ':null')
+				        self:DoEventN(1)
+				    end
+				"
                 onclicklua="
                     if NotEmpty(GetCvarString('QuickstatsMod_stats_tipPlayerName{index}')) then
                         Player_Stats_V2:Show(GetCvarString('QuickstatsMod_stats_tipPlayerName{index}'))
                     end
                 "
                 onmouseover="
-                    If(GamePhase == 3, Split
-                    (
-                        Set('QuickstatsMod_mouse_hover{index}', 1),
-                        PlaySound('/shared/sounds/ui/button_over_02.wav'),
-                        DoEvent(0),
-                        ShowWidget('globby_viewstats_tip')
-                    ));
+                    Set('QuickstatsMod_mouse_hover{index}', 1);
+                    PlaySound('/shared/sounds/ui/button_over_02.wav');
+                    DoEvent(0);
+                    ShowWidget('globby_viewstats_tip');
                 "
                 onmouseout="
                     Trigger('QuickstatsMod_StatsFade', 0);
@@ -137,7 +143,6 @@
     ]]></insert>
 
     <!-- Next, add the instance(s) of the stats button to each `lobby_larger_player_template.
-
          NOTE: I could not find an easier way to use the 'find' command here. This is pretty
          fragile, but it is what it is.		 -->
     <find><![CDATA[			<panel y="16i" align="center" width="-90i" height="20i" noclick="1">]]></find>
@@ -163,36 +168,29 @@
             <panel y="0.0%" x="0.0h" width="100%" height="100%" valign="center" float="right" align="center" padding="0" >
                 <!-- Stats -->
                 <panel width="44%" float="bottom" noclick="true" padding="0.1h" y="-0.5h">
-
                 <label width="100%" height="3.0h" content="--" font="dyn_14" shadow="true" color="#DFDFDF" align="center" textalign="left" textvalign="center" watch="QuickstatsMod_NewStats" ontrigger="SetText(param2);  SetColor(param3);"/>
-
                 <panel height="-2.0h" y="12.5%" noclick="true" align="center">
                     <label shadow="true" font="dyn_12" width="50%" color="#3abde7" align="left" valign="center" textvalign="center" textalign="left" content="globby_quick_stats" />
                     <label x="-5%" shadow="true" font="dyn_12" width="50%" color="1 1 1 1" align="right" valign="center" textvalign="center" textalign="right" content="" watch="QuickstatsMod_NewStats" ontrigger="SetText(FormatStringNewline(param1));" />
                 </panel>
-
             </panel>
             <!-- / Stats -->
-
             <!-- Recent Matches -->
             <panel width="36%" noclick="true" >
                 <panel width="96%" height="96%" y="0.8h" align="center" valign="center">
                     <frame texture="/ui/frames/tooltip_bg.tga" color="0 0 0 .5" borderthickness=".6h" />
                     <frame texture="/ui/frames/roundframe.tga" color=".3 .3 .3 1" borderthickness=".6h" />
-
                     <panel y="2%" width="-4%" height="11%" align="center">
                         <frame texture="/ui/frames/tooltip_bg.tga" color="#5a76b2" borderthickness=".4h" />
                         <frame texture="/ui/frames/roundframe.tga" color=".3 .3 .3 1" borderthickness=".4h" />
                         <label y="-1" width="92%" height="100%" align="center" textalign="left" textvalign="center" font="dyn_9" color="1 1 1 1" shadow="true" content="game_lobby_quickstats_recent" />
                     </panel>
-
                     <panel y="-1%" height="-15%" width="94%" align="center" valign="bottom" noclick="1" float="bottom">
                         <!-- TODO -->
                     </panel>
                 </panel>
             </panel>
             <!-- / Recent Matches -->
-
             <!-- Favorites -->
            <panel width="20%" noclick="true">
                 <panel width="96%" height="96%" y="0.8h" align="center" valign="center">
