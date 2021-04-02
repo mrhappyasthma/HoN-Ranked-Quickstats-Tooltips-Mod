@@ -1,6 +1,6 @@
 # HoN Ranked Quickstats Tooltips Mod
 
-![Example animated gif of mousing over the stats button and seeing the floating panel](https://i.imgur.com/NJbFwNz.gif)
+![Example animated gif of mousing over the stats button and seeing the floating panel](https://i.imgur.com/u7lfX5e.gif)
 
 ## About
 
