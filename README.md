@@ -1,6 +1,6 @@
 # HoN Ranked Quickstats Tooltips Mod
 
-![Example animated gif of mousing over the stats button and seeing the floating panel](https://i.imgur.com/Sp0zOO3.gif)
+![Example animated gif of mousing over the stats button and seeing the floating panel](https://i.imgur.com/NJbFwNz.gif)
 
 ## About
 
@@ -30,11 +30,10 @@ Updating is also done through the `HoN Mod Manager`. Simply click on `File -> Do
 The list of known [issues](https://github.com/mrhappyasthma/HoN-Ranked-Quickstats-Tooltips-Mod/issues) is plentiful.
 
 1. This mod only works for the new interface UI. This is by design, but could potentially be ported to the legacy UI.
-2. The 'Match History' section is empty. `PlayerStatsNormalSeasonResult` provides recent match IDs (`param[52]`), but not all the individual fields expected by the UI. It expects `7x` of the following `[path_to_hero_icon, ^844Win/^522Lose, kills_in_match, deaths_in_match, assists_in_match]`. I need to find a way to fetch this data from the match ID using Lua or a trigger.
-3. The positioning/sizing of the panels is hacky as can be. I couldn't find the most appropraite place to put this panel in the hierarchy, so I primarily just changed the `x`, `y`, `width`, `height` in order to make something that looks reasonable. This can easily be improved.
-4. This always shows the stats from the current season, even if the user is in a Midwars, Public, or Casual match. This could be fixed but since I only play ranked games primarily, I cut corners by desining it to exclude game variant.
-5. The 'New Player' overlay is not ported. The code can mostly be forked from `game_lobby.package`, but I had some trouble getting it to work without bugs so I just skipped that for now.
-6. The GPM field in the UI is misaligned (as seen in the screenshots). This is a preexisting issue that affected the UI element in `game_lobby.package` that I forked from. But it may be nice to fix this.
+2. The positioning/sizing of the panels is hacky as can be. I couldn't find the most appropraite place to put this panel in the hierarchy, so I primarily just changed the `x`, `y`, `width`, `height` in order to make something that looks reasonable. This can easily be improved.
+3. This always shows the stats from the current season, even if the user is in a Midwars, Public, or Casual match. This could be fixed but since I only play ranked games primarily, I cut corners by desining it to exclude game variant.
+4. The 'New Player' overlay is not ported. The code can mostly be forked from `game_lobby.package`, but I had some trouble getting it to work without bugs so I just skipped that for now.
+5. The GPM field in the UI is misaligned (as seen in the screenshots). This is a preexisting issue that affected the UI element in `game_lobby.package` that I forked from. But it may be nice to fix this.
 
 ## Design
 

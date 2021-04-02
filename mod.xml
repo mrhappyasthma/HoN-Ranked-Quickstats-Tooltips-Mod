@@ -4,8 +4,8 @@
   appversion="*"
   mmversion="*"
   name="Ranked Quickstats Tooltips"
-  version="0.2"
-  date="2021-03-21"
+  version="1.0"
+  date="2021-04-01"
   description="Enables quickstat tooltips to display current season ranked data when moused-over. This is reminiscent of the old main interface game_lobby UI."
   author="MrHappyAsthma"
   weblink="https://github.com/mrhappyasthma/HoN-Ranked-Quickstats-Tooltips-Mod"
@@ -25,9 +25,49 @@
 		end
 	]]></insert>
 
-    <find><![CDATA[function Player_Stats_V2:Show(nickName)]]></find>
 
-    <!-- Insert the helper Lua function, which actually triggers the stat fetch. -->
+	<!-- Insert the helper Lua function, which actually triggers the recent match stats fetch. -->
+	<find><![CDATA[function Player_Stats_V2:OnPlayerStatsMatchListResult(...)]]></find>
+	<insert position="before"><![CDATA[
+        function Player_Stats_V2:FetchSeasonNormalRecentMatchData(nickName)
+            if nickName ~= nil then
+                println('^gPlayer_Stats_V2:FetchSeasonNormalRecentMatchData() called with name: '..nickName)
+            else
+                println('^gPlayer_Stats_V2:FetchSeasonNormalRecentMatchData() called with name: nil')
+            end
+			-- Issue the form submission to fetch the most recent 7 matches. This triggers `PlayerStatsMatchListResult` trigger.
+            SubmitForm('PlayerStatsMatchList', 'f', 'match_history_overview', 'nickname', StripClanTag(nickName), 'cookie', Client.GetCookie(), 'table', 'campaign' , 'num', '7', 'current_season', '1')
+        end
+
+
+        function Player_Stats_V2:QuickStatsMod_OnPlayerStatsMatchListResult(index)
+            local numMatches = math.min(7, #_matchList)
+            local output = ''
+            for i=1, numMatches do
+                local match = _matchList[i]
+
+                local heroname = string.lower(string.sub(match['heroname'], 6, -1))
+                local iconPath = GetHeroIconPath(heroname)
+
+                local result = '^522Lose'
+                if match['result'] == '1' then
+                    result = '^884Win'
+                end
+
+                local KDA = '^g'..match['kills']..'^*/^r'..match['deaths']..'^*/^y'..match['assists']
+
+                output = output .. iconPath .. '^*:' .. result .. '^*:' .. KDA
+                if i ~= numMatches then
+                    output = output .. '^*|'
+                end
+            end
+            Set('QuickstatsMod_stats_tipMatch' .. index, output)
+        end
+	]]></insert>
+
+
+	 <!-- Insert the helper Lua function, which actually triggers the stat fetch. -->
+    <find><![CDATA[function Player_Stats_V2:Show(nickName)]]></find>
     <insert position="before"><![CDATA[
     function Player_Stats_V2:FetchSeasonNormalData(nickName)
         _currentNickName = nickName
@@ -57,7 +97,22 @@
     <insert position="before"><![CDATA[        <!-- Stats Button -->
         <trigger name="QuickstatsMod_StatsFade"/>
         <trigger name="QuickstatsMod_NewStats"/>
+		<trigger name="QuickstatsMod_RecentMatchTrigger"/>
         <trigger name="QuickstatsMod_FavHeroTrigger"/>
+
+	    <template name="QuickstatsMod_quickstat_recent">
+		    <panel height="14%" watch="QuickstatsMod_RecentMatchTrigger" ontrigger="if(param0 == {ID}, if(StringEmpty(param1), HideWidget(), ShowWidget()));" >
+			    <panel width="92@" height="92%" valign="center">
+			        <image watch="QuickstatsMod_RecentMatchTrigger" ontrigger="if(param0 == {ID}, SetTexture(param1));" texture="" />
+			    	<frame color="invisible" borderthickness="1" bordercolor=".2 .2 .2 1" />
+			    </panel>
+			    <panel width="-105@" align="right">
+			    	<label width="98%" height="100%" font="dyn_10" color="1 1 1 1" shadow="true" content="" textvalign="center" textalign="left" noclick="true" watch="QuickstatsMod_RecentMatchTrigger" ontrigger="if(param0 == {ID}, SetText(param2));" />
+				    <label width="68%" font="dyn_10" color="1 1 1 1" shadow="true" content="" align="right" height="100%" textvalign="center" textalign="center" noclick="true" watch="QuickstatsMod_RecentMatchTrigger" ontrigger="if(param0 == {ID}, SetText(param3));"/>
+			    </panel>
+		    </panel>
+	    </template>
+
         <template name="QuickstatsMod_quickstat_favorite">
             <panel width="100%" height="20%" watch="QuickstatsMod_FavHeroTrigger" ontrigger="if(param0 == {ID}, if(StringEmpty(param1), HideWidget(), ShowWidget()));" >
                 <panel x="2%" width="80@" height="80%" valign="center">
@@ -67,6 +122,7 @@
                 <label width="-100@" height="100%" align="right" textvalign="center" textalign="center" font="dyn_10" color="{color}" content="" watch="QuickstatsMod_FavHeroTrigger" ontrigger="if(param0 == {ID}, if(StringEmpty(param1), SetText(''), SetText(ceil(param2) # '%')));"/>
             </panel>
         </template>
+
         <template name="QuickstatsMod_stats_button">
             <button
                 color="invisible"
@@ -80,9 +136,16 @@
                 watch2="PlayerStatsNormalSeasonResult"
 				ontrigger2lua="
 				    if GetCvarBool('QuickstatsMod_mouse_hover{index}') then
-					    Cvar.GetCvar('QuickstatsMod_stats_tip{index}'):Set('^444(^666' .. math.floor(((param6 / param5) * 100) + 0.5) .. '%^444 ^w' .. param6 .. '\\n' .. param7 .. '\\n' .. string.format('%.2f', param20 / param25) .. ':1\\n' .. string.format('%.2f', param24 / param25) .. ':1\\n' .. string.format('%.2f', (param20 + param24) / param25) .. ':1\\n' .. string.format('%.1f', param74) .. '\\n' .. string.format('%.1f', math.ceil(param69 * 10) / 10) .. '\\n' .. string.format('%.1f', math.ceil((param42 / (param46 / 60)) * 10) / 10) .. '::' .. param0 .. '::' .. GetCvarString('QuickstatsMod_stats_tipPlayerColor{index}'))
+					    Cvar.GetCvar('QuickstatsMod_stats_tip{index}'):Set('^444(^666' .. math.floor(((param6 / param5) * 100) + 0.5) .. '%^444) ^w' .. param6 .. '\\n' .. param7 .. '\\n' .. string.format('%.2f', param20 / param25) .. ':1\\n' .. string.format('%.2f', param24 / param25) .. ':1\\n' .. string.format('%.2f', (param20 + param24) / param25) .. ':1\\n' .. string.format('%.1f', param74) .. '\\n' .. string.format('%.1f', math.ceil(param69 * 10) / 10) .. '\\n' .. string.format('%.1f', math.ceil((param42 / (param46 / 60)) * 10) / 10) .. '::' .. param0 .. '::' .. GetCvarString('QuickstatsMod_stats_tipPlayerColor{index}'))
 					    Cvar.GetCvar('QuickstatsMod_stats_tipHero{index}'):Set(Player_Stats_V2:GetHeroIconPath(param54) .. ':' .. param59 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param55) .. ':' .. param60 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param56) .. ':' .. param61 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param57) .. ':' .. param62 .. ':null|' .. Player_Stats_V2:GetHeroIconPath(param58) .. ':' .. param63 .. ':null')
 				        self:DoEventN(1)
+				    end
+				"
+				watch3="PlayerStatsMatchListResult"
+				ontrigger3lua="
+				    if GetCvarBool('QuickstatsMod_mouse_hover{index}') then
+				        Player_Stats_V2:QuickStatsMod_OnPlayerStatsMatchListResult({index})
+					    self:DoEventN(2)
 				    end
 				"
                 onclicklua="
@@ -100,6 +163,7 @@
                     Trigger('QuickstatsMod_StatsFade', 0);
                     HideWidget('globby_viewstats_tip');
                     Set('QuickstatsMod_stats_tip{index}', '');
+					Set('QuickstatsMod_stats_tipMatch{index}', '');
                     Set('QuickstatsMod_stats_tipHero{index}', '');
                     Set('QuickstatsMod_mouse_hover{index}', 0);
                 "
@@ -108,9 +172,15 @@
                         Player_Stats_V2:FetchSeasonNormalData(GetCvarString('QuickstatsMod_stats_tipPlayerName{index}'))
                     end
                 "
-                onevent1="
+                onevent1lua="
+				    if NotEmpty(GetCvarString('QuickstatsMod_stats_tipPlayerName{index}')) then
+                        Player_Stats_V2:FetchSeasonNormalRecentMatchData(GetCvarString('QuickstatsMod_stats_tipPlayerName{index}'))
+                    end
+                "
+				onevent2="
                     ExplodeTrigger('QuickstatsMod_NewStats', QuickstatsMod_stats_tip{index}, '|', '::');
                     Trigger('QuickstatsMod_StatsFade', 1);
+					ExplodeTrigger('QuickstatsMod_RecentMatchTrigger', QuickstatsMod_stats_tipMatch{index});
                     ExplodeTrigger('QuickstatsMod_FavHeroTrigger', QuickstatsMod_stats_tipHero{index});
                 "
                 onload="
@@ -118,6 +188,7 @@
                   createstring('QuickstatsMod_stats_tipPlayerName{index}', '');
                   createstring('QuickstatsMod_stats_tipPlayerColor{index}', '');
                   createstring('QuickstatsMod_stats_tip{index}', '');
+				  createstring('QuickstatsMod_stats_tipMatch{index}', '');
                   createstring('QuickstatsMod_stats_tipHero{index}', '');
                 "
            >
@@ -186,7 +257,13 @@
                         <label y="-1" width="92%" height="100%" align="center" textalign="left" textvalign="center" font="dyn_9" color="1 1 1 1" shadow="true" content="game_lobby_quickstats_recent" />
                     </panel>
                     <panel y="-1%" height="-15%" width="94%" align="center" valign="bottom" noclick="1" float="bottom">
-                        <!-- TODO -->
+					    <instance name="QuickstatsMod_quickstat_recent" ID="1" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="2" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="3" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="4" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="5" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="6" />
+					    <instance name="QuickstatsMod_quickstat_recent" ID="7" />
                     </panel>
                 </panel>
             </panel>
