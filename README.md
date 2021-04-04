@@ -7,9 +7,9 @@
 This is a mod for [Heroes of Newerth](http://www.heroesofnewerth.com) to revive a similar feature that the old style UI had: a stats button with a hoverover quickstats tooltip.
 
 ## Installing
-0. You will need the **latest** [HoN Mod Manager](https://github.com/mrhappyasthma/Heroes-Of-Newerth-Mod-Manager/releases/tag/1.4.0.1) to use this mod. So first, install that.
+0. You will need the **latest** [HoN Mod Manager](https://github.com/mrhappyasthma/Heroes-Of-Newerth-Mod-Manager/releases/download/Latest/HoN.Mod.Manager.zip) to use this mod. So first, download that.
 
-1. Once that is installed, you can download the latest release of the Ranked Quickstats Tooltip mod from [here](https://github.com/mrhappyasthma/HoN-RankedQuickstats-Tooltips/releases/download/Latest/ranked_quickstats_tooltips.honmod).
+1. Once that is installed, you can download the latest release of the Ranked Quickstats Tooltip mod from [here](https://github.com/mrhappyasthma/HoN-Ranked-Quickstats-Tooltips-Mod/releases/download/Latest/ranked_quickstats_tooltips.honmod).
 
 2. Place the downloaded `ranked_quickstats_tooltips.honmod` file into your Heroes of Newerth directory under `game/mod` folders. For example: `C:\Program Files (x86)\Heroes of Newerth\game\mods` or `C:\Program Files\Heroes of Newerth x64\game\mods`.
 
